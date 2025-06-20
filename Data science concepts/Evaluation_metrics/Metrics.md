@@ -41,10 +41,8 @@ This guide includes explanations and formulas for the most widely used evaluatio
 
 - [ ] Classification Metrics (Binary & Multiclass)
 - [ ] Regression Metrics
-- [ ] Ranking & Recommendation Metrics
 - [ ] Clustering Metrics
 - [ ] Cross-Validation Principles
-- [ ] Other Advanced or Domain-Specific Metrics
 
 We’ll cover both **interpretation** and **use cases** to help you choose the right metric for any project.
 
@@ -56,12 +54,11 @@ In a **classification task**, the objective is to predict a **discrete target va
 ### Common Evaluation Metrics for Classification
 
 - [ ] **Accuracy**
-- [ ] **Logarithmic Loss**
-- [ ] **Area Under Curve (AUC)**
 - [ ] **Precision**
 - [ ] **Recall**
 - [ ] **F1 Score**
 - [ ] **Confusion Matrix**
+- [ ] **Area Under Curve (AUC)**
 
 ---
 
@@ -169,3 +166,158 @@ A perfect model would have **zero false positives**, resulting in a precision of
   - Lowering the threshold → higher recall, lower precision
 
 Use **Precision-Recall curves** or the **F1 Score** (next section) to balance these metrics effectively.
+
+---
+
+### F1 Score
+
+**Definition**:  
+The **F1 Score** is the **harmonic mean** of **Precision** and **Recall**. It provides a single metric that balances the trade-off between the two.
+$$
+F_1 = 2 \cdot \frac{1}{\frac{1}{\text{precision}} + \frac{1}{\text{recall}}}
+$$
+
+
+**Range**:  
+The F1 score lies between **0 and 1**, where 1 indicates **perfect precision and recall**, and 0 indicates the worst performance.
+
+**Why Harmonic Mean?**  
+The **harmonic mean** is used instead of the arithmetic mean because it handles ratios like precision and recall more effectively. A high F1 score means:
+
+- The model is **precise** (few false positives)
+- The model is **robust** (few false negatives)
+
+> F1 ensures that **both precision and recall must be high** to yield a high score. A model with high precision but low recall or vice versa will still have a low F1.
+
+**When to use**:
+- Especially useful in **imbalanced datasets**
+- Ideal when you want to balance **false positives and false negatives**
+- Common in **NLP**, **fraud detection**, **medical diagnosis**, and more
+
+**Example**:  
+A model with precision = 0.90 and recall = 0.50 will have a significantly lower F1 score, reflecting that it misses many true positives.
+
+---
+
+### Confusion Matrix
+
+**Definition**:  
+A **Confusion Matrix** is a performance measurement tool for classification problems. It summarizes the prediction results of a classifier by showing the correct and incorrect predictions broken down by each class.
+
+It creates an **N × N matrix**, where **N** is the number of target classes. For binary classification, **N = 2**, resulting in a **2 × 2 matrix**.
+
+#### Example
+
+Let's say we tested our binary classification model on **165 samples** and got the following results:
+
+|                | **Predicted: NO** | **Predicted: YES** |
+|----------------|-------------------|---------------------|
+| **Actual: NO** | 50                | 10                  |
+| **Actual: YES**| 5                 | 100                 |
+
+Let’s define the four key components:
+
+- **True Positives (TP)** = 100 → Predicted **YES**, actually **YES**
+- **True Negatives (TN)** = 50 → Predicted **NO**, actually **NO**
+- **False Positives (FP)** = 10 → Predicted **YES**, actually **NO**
+- **False Negatives (FN)** = 5  → Predicted **NO**, actually **YES**
+
+---
+
+
+## Regression Evaluation Metrics
+
+In a **regression task**, the goal is to predict a **continuous target variable**. Unlike classification, where the output is a discrete label, regression metrics evaluate how closely the model’s predicted values match the actual values.
+
+Below are the most commonly used evaluation metrics for regression:
+
+- [Mean Absolute Error (MAE)](#mae)
+- [Mean Squared Error (MSE)](#mse)
+- [Root Mean Squared Error (RMSE)](#rmse)
+- [Root Mean Squared Logarithmic Error (RMSLE)](#rmsle)
+- [R² Score (Coefficient of Determination)](#r2)
+
+
+---
+
+### <a id="mae"></a> Mean Absolute Error (MAE)
+
+**Definition**:  
+MAE measures the **average absolute difference** between actual and predicted values. It tells us how far, on average, the predictions are from the actual values.
+$$
+\text{MAE} = \frac{1}{N} \sum_{j=1}^{N} \left| y_j - \hat{y}_j \right|
+$$
+
+
+**Notes**:
+- Easy to interpret.
+- Does **not indicate the direction** of error (over-predict vs. under-predict).
+- All errors are treated equally.
+
+---
+
+### <a id="mse"></a> Mean Squared Error (MSE)
+
+**Definition**:  
+MSE calculates the **average of the squared differences** between predicted and actual values.
+$$
+\text{MSE} = \frac{1}{N} \sum_{j=1}^{N} \left( y_j - \hat{y}_j \right)^2
+$$
+
+
+**Notes**:
+- Penalizes **larger errors** more than smaller ones.
+- Helps in focusing on larger errors.
+- Commonly used in optimization due to smooth gradient.
+
+---
+
+### <a id="rmse"></a> Root Mean Squared Error (RMSE)
+
+**Definition**:  
+RMSE is the **square root of MSE**, and brings the error metric back to the same unit as the original values.
+$$
+\text{RMSE} = \sqrt{ \frac{1}{N} \sum_{j=1}^{N} \left( y_j - \hat{y}_j \right)^2 }
+$$
+
+
+**Notes**:
+- More interpretable than MSE.
+- **Sensitive to outliers** due to squaring.
+
+---
+
+### <a id="rmsle"></a> Root Mean Squared Logarithmic Error (RMSLE)
+
+**Definition**:  
+RMSLE is used when the target variable spans a **wide range**, and **underestimating** is worse than overestimating. It reduces the impact of large predicted values when they are close to actual values.
+$$
+\text{RMSLE} = \sqrt{ \frac{1}{N} \sum_{j=1}^{N} \left( \log(y_j + 1) - \log(\hat{y}_j + 1) \right)^2 }
+$$
+
+
+**Notes**:
+- Adds a **log transform**, which makes it suitable for datasets with exponential growth patterns.
+- Ideal when **relative differences** matter more than absolute ones.
+
+---
+
+### <a id="r2"></a> R² Score (Coefficient of Determination)
+
+**Definition**:  
+R² measures how well the **predicted values explain the variability** of the actual values. It represents the proportion of variance in the dependent variable that is predictable from the independent variables.
+$$
+R^2 = 1 - \frac{ \sum_{j=1}^{n} (y_j - \hat{y}_j)^2 }{ \sum_{j=1}^{n} (y_j - \bar{y})^2 }
+$$
+
+
+**Range**:
+- 1.0: Perfect prediction
+- 0.0: Model does no better than the mean
+- < 0.0: Model is worse than the mean
+
+**Notes**:
+- Common in linear regression analysis.
+- Not always reliable with **nonlinear models** or **imbalanced datasets**.
+
+---

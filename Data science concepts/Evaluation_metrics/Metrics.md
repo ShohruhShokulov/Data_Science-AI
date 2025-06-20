@@ -53,7 +53,7 @@ We’ll cover both **interpretation** and **use cases** to help you choose the r
 
 In a **classification task**, the objective is to predict a **discrete target variable** (e.g., "Yes"/"No", "Spam"/"Not Spam"). Evaluating the performance of a classification model involves several metrics, each offering unique insight into different aspects of the model’s behavior.
 
-### 🔍 Common Evaluation Metrics for Classification
+### Common Evaluation Metrics for Classification
 
 - [ ] **Accuracy**
 - [ ] **Logarithmic Loss**
@@ -68,13 +68,10 @@ In a **classification task**, the objective is to predict a **discrete target va
 ### Accuracy
 
 **Definition**:  
-Accuracy is the most intuitive performance measure. It is the **ratio of correct predictions to the total number of predictions** made.
-
-**Formula:**
-
-\[
-\text{Accuracy} = \frac{\text{Number of Correct Predictions}}{\text{Total Number of Predictions}}
-\]
+Accuracy is a fundamental metric for evaluating the performance of a classification model, providing a quick snapshot of how well the model is performing in terms of correct predictions. It is calculated as the **ratio of correct predictions to the total number of input samples**.
+$$
+\text{Accuracy} = \frac{\text{correct classifications}}{\text{total classifications}} = \frac{TP + TN}{TP + TN + FP + FN}
+$$
 
 **Interpretation**:  
 Accuracy gives a quick snapshot of model performance but is often **misleading for imbalanced datasets**.
@@ -93,5 +90,82 @@ If tested on a more balanced test set (e.g., 60% Class A, 40% Class B), the mode
 
 ---
 
-Accuracy = \frac{\text{correct classifications}}{\text{total classifications}} = \frac{TP + TN}{TP + TN + FP + FN}
+### Recall (True Positive Rate, TPR)
 
+**Definition**:  
+Recall is the **proportion of actual positive cases that were correctly identified by the model**. It’s also referred to as the **True Positive Rate (TPR)** or **Probability of Detection**.
+
+$$
+\text{Recall (or TPR)} = \frac{\text{correctly classified actual positives}}{\text{all actual positives}} = \frac{TP}{TP + FN}
+$$
+
+
+**Explanation**:  
+False negatives are **actual positives** that were **misclassified as negatives**, which is why they appear in the denominator.
+
+In the context of spam classification:
+> Recall = "What fraction of spam emails are detected by this model?"
+
+A perfect model would have **zero false negatives**, resulting in a recall of **1.0 (100%)**.
+
+**When to use**:
+- Recall is **more informative than accuracy** in **imbalanced datasets**
+- Critical in domains like **disease diagnosis** or **fraud detection** where **missing a positive case is costly**
+
+---
+
+### False Positive Rate (FPR)
+
+**Definition**:  
+The **False Positive Rate (FPR)** is the proportion of all actual negatives that were **incorrectly classified as positives**. It is also known as the **Probability of False Alarm**.
+$$
+\text{FPR} = \frac{\text{incorrectly classified actual negatives}}{\text{all actual negatives}} = \frac{FP}{FP + TN}
+$$
+
+
+**Explanation**:  
+False positives are **actual negatives** misclassified as positives.
+
+In the context of spam classification:
+> FPR = "What fraction of legitimate emails are falsely flagged as spam?"
+
+A perfect model would have **zero false positives**, giving an FPR of **0.0 (0%)**.
+
+**When to use**:
+- Useful for evaluating the **false alarm rate**
+- Less meaningful in extremely imbalanced datasets where the number of negatives is very small
+
+---
+
+### Precision
+
+**Definition**:  
+Precision is the **proportion of positive predictions that are actually correct**. It measures **how reliable a model’s positive predictions are**.
+$$
+\text{Precision} = \frac{\text{correctly classified actual positives}}{\text{everything classified as positive}} = \frac{TP}{TP + FP}
+$$
+
+
+**Explanation**:  
+False positives reduce precision, so a high precision means the model rarely predicts "positive" incorrectly.
+
+In the context of spam classification:
+> Precision = "Out of all emails flagged as spam, how many are actually spam?"
+
+A perfect model would have **zero false positives**, resulting in a precision of **1.0 (100%)**.
+
+**When to use**:
+- Important when **false positives are costly**
+- Less meaningful if positive class is extremely rare
+
+---
+
+### Precision vs. Recall Trade-off
+
+- **Precision improves** as **false positives decrease**
+- **Recall improves** as **false negatives decrease**
+- Adjusting the classification threshold **inversely affects** these two metrics:
+  - Raising the threshold → higher precision, lower recall
+  - Lowering the threshold → higher recall, lower precision
+
+Use **Precision-Recall curves** or the **F1 Score** (next section) to balance these metrics effectively.

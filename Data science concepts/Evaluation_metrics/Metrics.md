@@ -22,7 +22,7 @@ Choosing the right evaluation metric depends on the problem type (classification
 
 ## Why Metrics Matter
 
-Many beginner analysts or data scientists rush to apply models on test sets without understanding their robustness. A good model is not just about achieving high performance on training data—it must generalize well to new data.
+Many beginner analysts or data scientists rush to apply models on test sets without understanding their robustness. A good model is not just about achieving high performance on training data, it must generalize well to new data.
 
 To do this, we must **evaluate models using proper metrics** before trusting their predictions.
 
@@ -49,5 +49,49 @@ This guide includes explanations and formulas for the most widely used evaluatio
 We’ll cover both **interpretation** and **use cases** to help you choose the right metric for any project.
 
 ---
+## Classification Metrics
 
-_Ready to make your models more meaningful? Let’s dive in._
+In a **classification task**, the objective is to predict a **discrete target variable** (e.g., "Yes"/"No", "Spam"/"Not Spam"). Evaluating the performance of a classification model involves several metrics, each offering unique insight into different aspects of the model’s behavior.
+
+### 🔍 Common Evaluation Metrics for Classification
+
+- [ ] **Accuracy**
+- [ ] **Logarithmic Loss**
+- [ ] **Area Under Curve (AUC)**
+- [ ] **Precision**
+- [ ] **Recall**
+- [ ] **F1 Score**
+- [ ] **Confusion Matrix**
+
+---
+
+### Accuracy
+
+**Definition**:  
+Accuracy is the most intuitive performance measure. It is the **ratio of correct predictions to the total number of predictions** made.
+
+**Formula:**
+
+\[
+\text{Accuracy} = \frac{\text{Number of Correct Predictions}}{\text{Total Number of Predictions}}
+\]
+
+**Interpretation**:  
+Accuracy gives a quick snapshot of model performance but is often **misleading for imbalanced datasets**.
+
+**Example**:
+Let’s assume:
+- 90% of the training data belongs to **Class A**
+- 10% belongs to **Class B**
+
+A model predicting **only Class A** would still achieve 90% accuracy on this imbalanced dataset, even though it **completely fails to identify Class B**.
+
+If tested on a more balanced test set (e.g., 60% Class A, 40% Class B), the model’s accuracy would drop, revealing its poor generalization.
+
+**Limitation**:
+> Accuracy does **not differentiate** between types of errors (false positives vs. false negatives) and may provide a **false sense of high performance** when the dataset is imbalanced.
+
+---
+
+Accuracy = \frac{\text{correct classifications}}{\text{total classifications}} = \frac{TP + TN}{TP + TN + FP + FN}
+

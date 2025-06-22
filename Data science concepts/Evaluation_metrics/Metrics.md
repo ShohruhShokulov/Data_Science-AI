@@ -35,34 +35,36 @@ Different models require different evaluation strategies, and choosing the wrong
 
 ---
 
-## Topics Covered in This Guide
+## Topics Covered in This Article
 
 This guide includes explanations and formulas for the most widely used evaluation metrics, grouped by task type:
 
-- [ ] Classification Metrics (Binary & Multiclass)
-- [ ] Regression Metrics
-- [ ] Clustering Metrics
-- [ ] Cross-Validation Principles
+- [Classification Metrics (Binary & Multiclass)](#classification-metrics)
+- [Regression Metrics](#regression-evaluation-metrics)
+- [Clustering Metrics](#clustering-metrics)
+- [Cross-Validation Principles](#cross-validation-principles)
 
 We’ll cover both **interpretation** and **use cases** to help you choose the right metric for any project.
 
 ---
-## Classification Metrics
+## <a id="classification-metrics"></a>Classification Metrics
 
 In a **classification task**, the objective is to predict a **discrete target variable** (e.g., "Yes"/"No", "Spam"/"Not Spam"). Evaluating the performance of a classification model involves several metrics, each offering unique insight into different aspects of the model’s behavior.
 
 ### Common Evaluation Metrics for Classification
 
-- [ ] **Accuracy**
-- [ ] **Precision**
-- [ ] **Recall**
-- [ ] **F1 Score**
-- [ ] **Confusion Matrix**
-- [ ] **Area Under Curve (AUC)**
-
+- [Accuracy](#accuracy)
+- [Recall](#recall)
+- [False Positive Rate (FPR)](#false-positive-rate-fpr)
+- [Precision](#precision)
+- [F1 Score](#f1-score)
+- [Confusion Matrix](#confusion-matrix)
+- [Area Under Curve (AUC)](#area-under-curve-auc)
+- [Matthews Correlation Coefficient (MCC)](#matthews-correlation-coefficient-mcc)
+- [Brier Score](#brier-score)
 ---
 
-### Accuracy
+### <a id="accuracy"></a>Accuracy
 
 **Definition**:  
 Accuracy is a fundamental metric for evaluating the performance of a classification model, providing a quick snapshot of how well the model is performing in terms of correct predictions. It is calculated as the **ratio of correct predictions to the total number of input samples**.
@@ -87,7 +89,7 @@ If tested on a more balanced test set (e.g., 60% Class A, 40% Class B), the mode
 
 ---
 
-### Recall (True Positive Rate, TPR)
+### <a id="recall"></a>Recall (True Positive Rate, TPR)
 
 **Definition**:  
 Recall is the **proportion of actual positive cases that were correctly identified by the model**. It’s also referred to as the **True Positive Rate (TPR)** or **Probability of Detection**.
@@ -224,6 +226,179 @@ Let’s define the four key components:
 
 ---
 
+### <a id="area-under-curve-auc"></a> AUC ROC Curve
+
+**Definition**: **AUC-ROC curve** is a graph used to check how well a binary classification model works. It helps us to understand how well the model separates the positive cases like people with a disease from the negative cases like people without the disease at different threshold level. It shows how good the model is at telling the difference between the two classes by plotting:
+- True Positive Rate (TPR): how often the model correctly predicts the positive cases also known as Sensitivity or Recall.
+$$
+\text{TPR} = \frac{TP}{TP + FN}
+$$
+- False Positive Rate (FPR): how often the model incorrectly predicts a negative case as positive.
+$$
+\text{FPR} = \frac{FP}{FP + TN}
+$$
+
+- Specificity: measures the proportion of actual negatives that the model correctly identifies. It is calculated as 1 - FPR.
+$$
+\text{TNR} = \frac{TN}{TN + FP}
+$$
+
+
+![alt text](image.png)
+#### ROC Curve
+
+- **ROC (Receiver Operating Characteristic) Curve** plots **TPR vs. FPR** at various classification thresholds.
+- Shows the **trade-off between sensitivity and specificity**.
+
+> The **steeper the curve**, the better the model is at classification.
+
+---
+
+#### AUC (Area Under the Curve)
+
+- **AUC** quantifies the entire area under the ROC curve.
+- **Higher AUC = better model performance**.
+
+
+- **AUC = 1.0** → Perfect classifier  
+- **AUC = 0.5** → No skill (random guessing)  
+- **AUC < 0.5** → Worse than random
+
+---
+
+#### How AUC-ROC Works (Example Insight)
+
+Imagine a dataset with 6 points:
+
+- 3 positives (Class 1 – disease)
+- 3 negatives (Class 0 – no disease)
+
+Steps:
+1. Randomly select a pair: one positive, one negative.
+2. Check if the model gives the **positive** a higher predicted probability.
+3. Repeat this for **all possible pairs**.
+4. AUC is the **fraction of correct rankings** out of all possible positive-negative pairs.
+
+![alt text](image-1.png)
+---
+
+#### When to Use AUC-ROC
+
+Use AUC-ROC when:
+- The **dataset is balanced**.
+- You care equally about **false positives and false negatives**.
+- You want to evaluate the model across **all thresholds**.
+
+**Caution**: On **highly imbalanced datasets**, AUC-ROC can be **overly optimistic**. In such cases, consider using the **Precision-Recall Curve** instead.
+
+---
+#### Model Interpretation Summary
+
+| AUC Score  | Interpretation                         |
+|------------|-----------------------------------------|
+| ~1.0       | Excellent separability                  |
+| ~0.5       | No discriminative power (random)        |
+| < 0.5      | Poor – model is confusing the classes   |
+
+---
+
+_In short, AUC-ROC gives a **threshold-independent** view of model performance and is widely used to compare classification models objectively._
+
+---
+### <a id="matthews-correlation-coefficient-mcc"></a> Matthews Correlation Coefficient (MCC)
+
+**Definition**:  
+The **Matthews Correlation Coefficient (MCC)** is a performance metric for **binary classification** problems. Unlike Accuracy or F1 Score, MCC takes into account **true and false positives and negatives** and is regarded as a **balanced metric**, even when class sizes are **unequal** (imbalanced).
+
+---
+
+#### MCC Range and Interpretation
+
+The MCC value ranges from **-1 to +1**:
+
+| MCC Score | Meaning                          |
+|-----------|----------------------------------|
+| +1        | Perfect prediction               |
+| 0         | Random prediction                |
+| -1        | Completely incorrect prediction  |
+
+A key strength of MCC is its **symmetry**: the metric does **not favor any class** and treats positive and negative labels equally. This makes MCC particularly robust for **imbalanced datasets**, where metrics like accuracy can be misleading.
+
+---
+
+#### MCC Formula
+
+The MCC is defined as:
+$$
+\text{MCC} = \frac{(TP \cdot TN) - (FP \cdot FN)}{\sqrt{(TP + FP)(TP + FN)(TN + FP)(TN + FN)}}
+$$
+
+Where:
+- TP = True Positives
+- TN = True Negatives
+- FP = False Positives
+- FN = False Negatives
+
+The formula effectively computes the correlation between predicted and actual classes.
+
+---
+
+#### Why Use MCC?
+
+- It’s one of the **most informative single-score metrics** for binary classification.
+- Especially useful when:
+  - The dataset is **highly imbalanced**
+  - You want a metric that **balances all confusion matrix components**
+- Common in **bioinformatics**, **medical diagnostics**, and **fraud detection** where **minority class performance is critical**
+
+> MCC is generally more reliable than F1 Score or Accuracy when class distributions are uneven.
+
+_📌 Use MCC when you want a **balanced and reliable metric** for binary classification—especially when working with rare event detection or skewed class distributions._
+
+---
+### <a id="brier-score"></a>Brier Score
+
+**Definition**  
+The **Brier Score (BS)** is a **strictly proper scoring rule** that measures the **accuracy of probabilistic predictions**.  
+For a set of *N* forecasts, it is the **mean squared difference** between the predicted probability *f*<sub>t</sub> of an event and the actual outcome *o*<sub>t</sub> (0 = did not occur, 1 = occurred).
+
+$$
+\text{BS} = \frac{1}{N} \sum_{t=1}^{N} (f_t - o_t)^2
+$$
+
+
+**Range & Interpretation**
+
+| BS Value | Interpretation                              |
+|----------|---------------------------------------------|
+| 0        | Perfect calibration and discrimination      |
+| 0‒0.25   | Very good                                   |
+| 0.25‒0.50| Moderate / chance level (depends on base rate) |
+| 1        | Worst possible (for binary BS in [0, 1])    |
+
+---
+
+#### Why Use the Brier Score?
+
+- **Calibration + Discrimination** in one number: lower BS means predicted probabilities are closer to observed frequencies.
+- **Strictly proper**: forecasters are incentivised to report their **true beliefs**.
+- **Model-agnostic**: works with any algorithm that outputs probabilities.
+- **Complementary** to Log-Loss / Cross-Entropy: BS penalises large errors quadratically (MSE style), whereas Log-Loss penalises via the log function.
+
+
+#### Worked Example
+
+| Forecast *P(rain)* | Outcome | Calculation | BS  |
+|--------------------|---------|-------------|-----|
+| 1.00 (100 %)       | Rain    | (1 − 1)²    | 0.00|
+| 1.00               | No rain | (1 − 0)²    | 1.00|
+| 0.70               | Rain    | (0.70 − 1)² | 0.09|
+| 0.70               | No rain | (0.70 − 0)² | 0.49|
+| 0.30               | Rain    | (0.30 − 1)² | 0.49|
+| 0.50               | Either  | (0.50 − 1)² or (0.50 − 0)² = 0.25 |
+
+> **Lower is better**: over many forecasts, an average BS closer to **0** means better-calibrated probabilities.
+---
 
 ## Regression Evaluation Metrics
 
